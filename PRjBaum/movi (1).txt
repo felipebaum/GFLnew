@@ -1,0 +1,44 @@
+SELECT
+	SOL.id [Nro. Solicitação],
+	SERV.descricao [Serviço],
+	LOJA.nome [Filial],
+	(CASE SOL.idServicoPrincipal WHEN 1 THEN UNIDADE_COLETA.sigla ELSE UNIDADE_ENTREGA.sigla END) [Unidade Operacional],
+	SOL_STATUS.descricao [Status Solicitação],
+	VOL_STATUS.descricao [Status Volume],
+	OCO_TYPE.descricao [Ocorrência],
+	OCO_STATUS.descricao [Status Ocorrência],
+	OCO_USER.nome [Usuário da Ocorrência],
+	UNIDADE_OCORRENCIA.sigla [Unidade da Ocorrência],
+	OCO.dtCadastro [Dt. Cadastro Ocorrência],
+	OCO.dtOcorrencia [Dt. Ocorrência]
+FROM
+	tb_solicitacao_ocorrencia OCO WITH(NOLOCK)
+INNER JOIN
+	tb_solicitacao SOL WITH(NOLOCK) ON SOL.id = OCO.idSolicitacao
+INNER JOIN
+	tb_solicitacao_notafiscal_volume VOL WITH(NOLOCK) ON VOL.idSolicitacao = OCO.idSolicitacao
+INNER JOIN
+	datatb_servico SERV WITH(NOLOCK) ON SERV.id = SOL.idServico
+INNER JOIN
+	datatb_ocorrencia OCO_TYPE WITH(NOLOCK) ON OCO_TYPE.id = OCO.idOcorrencia
+INNER JOIN
+	datatb_status_solicitacao OCO_STATUS WITH(NOLOCK) ON OCO_STATUS.id = OCO.idStatusSolicitacao
+INNER JOIN
+	datatb_status_solicitacao SOL_STATUS WITH(NOLOCK) ON SOL_STATUS.id = SOL.idStatusSolicitacao
+INNER JOIN
+	datatb_status_solicitacao VOL_STATUS WITH(NOLOCK) ON VOL_STATUS.id = VOL.idStatusVolume
+LEFT JOIN
+	tb_loja LOJA WITH(NOLOCK) ON LOJA.id = SOL.idLoja
+LEFT JOIN
+	tb_unidade UNIDADE_ENTREGA WITH(NOLOCK) ON UNIDADE_ENTREGA.id = SOL.idUnidadeEntrega
+LEFT JOIN
+	tb_unidade UNIDADE_COLETA WITH(NOLOCK) ON UNIDADE_COLETA.id = SOL.idUnidadeColeta
+LEFT JOIN
+	tb_unidade UNIDADE_OCORRENCIA WITH(NOLOCK) ON UNIDADE_OCORRENCIA.id = OCO.idUnidadeOcorrencia
+LEFT JOIN
+	systb_usuario_sistema OCO_USER WITH(NOLOCK) ON OCO_USER.id = OCO.idUsuarioOcorrencia
+WHERE
+	OCO.idTransportadora = 1 AND
+	CONVERT(DATE, OCO.dtOcorrencia , 103) = CONVERT(DATE, GETDATE()-1 , 103) AND
+	SOL.idServico <> 5 AND
+	OCO.flagExcluido = 'N'
