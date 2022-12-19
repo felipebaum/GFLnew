@@ -1,13 +1,10 @@
 
-# pip install pypyodbc 
-# pip install pydal 
 from datetime import datetime
 import time
 import pandas as pd
-from pydal import DAL
 import schedule
-from pydal import DAL
 import pyarrow
+import os
 
 
 db = DAL('mssql3://auditoria:I2iOYd40Le134WQq1YqM@35.247.206.86/db_sinclog_hmlog')
@@ -18,7 +15,7 @@ def consultaMovimentacao():
 
     now = datetime.now()
 
-    nomearquivo = f"Movimentação-{now.day}{now.month}{now.year}{now.hour}{now.minute}"
+    nomearquivomov = f"Movimentação-{now.day}{now.month}{now.year}{now.hour}{now.minute}"
 
     f_ocorrencia = open("movi.txt", "r")
 
@@ -29,18 +26,18 @@ def consultaMovimentacao():
     )
 
     df = pd.DataFrame(retorno)
-    df.to_parquet(fr'''C:\python\{nomearquivo}.csv''', engine='pyarrow')
-    print(f'Fim {nomearquivo}')
+    df.to_parquet(fr'''C:\python\{nomearquivomov}.csv''', engine='pyarrow')
+    print(f'Fim {nomearquivomov}')
 
 
 def consultaRelv2():
+    print("Inicio")
 
     now = datetime.now()
-    date_time = now.strftime("%m-%d-%Y-%H:%M:%S")
 
-    nomearquivo = f"Relregal-{now.day}{now.month}{now.year}{now.hour}{now.minute}"
+    nomearquivorel = f"Relgeral-{now.day}{now.month}{now.year}{now.hour}{now.minute}"
 
-    f_ocorrencia = open("rel2.txt", "r")
+    f_ocorrencia = open("Rel2.txt", "r")
 
     query = f_ocorrencia.read()
 
@@ -49,7 +46,8 @@ def consultaRelv2():
     )
 
     df = pd.DataFrame(retorno)
-    df.to_csv(r'C:\python\movimentacao{}.csv', encoding="iso-8859-1".format(nomearquivo))
+    df.to_parquet(fr'''C:\python\{nomearquivorel}.csv''', engine='pyarrow')
+    print(f'Fim {nomearquivorel}')
 
 
 # rotinas rel geral v2
@@ -76,4 +74,5 @@ consultaMovimentacao()
 while True:
     schedule.run_pending()
     print("Aguardando agendamento")
+    os.system('clear') or None
     time.sleep(1)
