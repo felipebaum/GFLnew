@@ -1,11 +1,11 @@
 
-from datetime import datetime
+import os
 import time
+from datetime import datetime
+
 import pandas as pd
 import schedule
-import pyarrow
-import os
-
+from pydal import DAL
 
 db = DAL('mssql3://auditoria:I2iOYd40Le134WQq1YqM@35.247.206.86/db_sinclog_hmlog')
 
