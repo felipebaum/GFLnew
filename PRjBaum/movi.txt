@@ -39,6 +39,6 @@ LEFT JOIN
 	systb_usuario_sistema OCO_USER WITH(NOLOCK) ON OCO_USER.id = OCO.idUsuarioOcorrencia
 WHERE
 	OCO.idTransportadora = 1 AND
-	CONVERT(DATE, OCO.dtOcorrencia , 103) = CONVERT(DATE, GETDATE()-3 , 103) AND
+	CONVERT(DATE, OCO.dtOcorrencia , 103) = CONVERT(DATE, GETDATE() , 103) AND
 	SOL.idServico <> 5 AND
 	OCO.flagExcluido = 'N'

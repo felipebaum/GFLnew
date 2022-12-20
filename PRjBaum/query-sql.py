@@ -1,8 +1,7 @@
 
-import os
 import time
 from datetime import datetime
-
+import pyarrow
 import pandas as pd
 import schedule
 from pydal import DAL
@@ -11,7 +10,7 @@ db = DAL('mssql3://auditoria:I2iOYd40Le134WQq1YqM@35.247.206.86/db_sinclog_hmlog
 
 
 def consultaMovimentacao():
-    print("Inicio")
+    print("Inicio Consulta Movimentacao")
 
     now = datetime.now()
 
@@ -26,12 +25,12 @@ def consultaMovimentacao():
     )
 
     df = pd.DataFrame(retorno)
-    df.to_parquet(fr'''C:\python\{nomearquivomov}.csv''', engine='pyarrow')
+    df.to_parquet(fr'''C:\GFLMOVI\{nomearquivomov}.parquet''', engine='pyarrow')
     print(f'Fim {nomearquivomov}')
 
 
 def consultaRelv2():
-    print("Inicio")
+    print("Inicio Consulta rel geral v2")
 
     now = datetime.now()
 
@@ -46,7 +45,7 @@ def consultaRelv2():
     )
 
     df = pd.DataFrame(retorno)
-    df.to_parquet(fr'''C:\python\{nomearquivorel}.csv''', engine='pyarrow')
+    df.to_parquet(fr'''C:\GFLRELV2\{nomearquivorel}.parquet''', engine='pyarrow')
     print(f'Fim {nomearquivorel}')
 
 
@@ -69,10 +68,7 @@ schedule.every().day.at("15:00").do(consultaMovimentacao)
 schedule.every().day.at("18:00").do(consultaMovimentacao)
 schedule.every().day.at("21:00").do(consultaMovimentacao)
 schedule.every().day.at("23:30").do(consultaMovimentacao)
-consultaMovimentacao()
 
 while True:
     schedule.run_pending()
-    print("Aguardando agendamento")
-    os.system('clear') or None
     time.sleep(1)
