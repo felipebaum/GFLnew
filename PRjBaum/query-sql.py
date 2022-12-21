@@ -69,6 +69,7 @@ schedule.every().day.at("18:00").do(consultaMovimentacao)
 schedule.every().day.at("21:00").do(consultaMovimentacao)
 schedule.every().day.at("23:30").do(consultaMovimentacao)
 
+
 while True:
     schedule.run_pending()
     time.sleep(1)
